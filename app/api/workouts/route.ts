@@ -31,8 +31,10 @@ export async function GET() {
           
           const body = await markdownToHtml(content)
           
+          const dateStr = filename.replace('.md', '')
+          
           return {
-            date: data.date,
+            date: dateStr,
             phase: data.phase,
             sports: data.sports,
             summary: data.summary,
@@ -42,7 +44,7 @@ export async function GET() {
         })
     )
 
-    workouts.sort((a, b) => a.date.localeCompare(b.date))
+    workouts.sort((a, b) => String(a.date).localeCompare(String(b.date)))
 
     return NextResponse.json(workouts)
   } catch (error) {
