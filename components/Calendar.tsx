@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addDays, subDays } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
 import WorkoutModal from './WorkoutModal'
@@ -21,6 +21,13 @@ export default function Calendar({ workouts }: CalendarProps) {
   const [loggedDates, setLoggedDates] = useState<Set<string>>(new Set())
   const [focusedDate, setFocusedDate] = useState<string | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetch('/api/logs')
+      .then(r => r.json())
+      .then((dates: string[]) => setLoggedDates(new Set(dates)))
+      .catch(() => {})
+  }, [])
 
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentDate)
