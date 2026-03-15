@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode (default) */
+  --bg-primary: #F4F1EC;
+  --bg-secondary: #ECEAE3;
+  --bg-card: #FAF9F6;
+  --text-primary: #1E1C19;
+  --text-secondary: #4A4540;
+  --text-muted: #8A8178;
+
+  --sport-swim: #2E6B9E;
+  --sport-bike: #C47A2A;
+  --sport-run: #3A7D52;
+  --sport-strength: #7A4F8A;
+
+  --phase-base: #D4C9B0;
+  --phase-race-prep: #C4845A;
+  --phase-taper: #7A9E7E;
+
+  --accent-primary: #2E6B9E;
+  --accent-warm: #C47A2A;
+  --border: #D6D0C4;
+  --border-strong: #B0A898;
+  --shadow: rgba(30, 28, 25, 0.10);
+  --shadow-strong: rgba(30, 28, 25, 0.20);
+
+  --text-xs: 0.70rem;
+  --text-sm: 0.825rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --bg-primary: #181613;
+  --bg-secondary: #201E1A;
+  --bg-card: #272420;
+  --text-primary: #EDE8DF;
+  --text-secondary: #B8B0A0;
+  --text-muted: #7A7268;
+
+  --sport-swim: #5A9EC8;
+  --sport-bike: #D4944A;
+  --sport-run: #5A9E72;
+  --sport-strength: #9A6FAA;
+
+  --phase-base: #3A3428;
+  --phase-race-prep: #7A4830;
+  --phase-taper: #3A5A3E;
+
+  --accent-primary: #5A9EC8;
+  --accent-warm: #D4944A;
+  --border: #3A3530;
+  --border-strong: #504840;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --shadow-strong: rgba(0, 0, 0, 0.55);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  transition: background-color 250ms ease, color 250ms ease, border-color 150ms ease;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Libre Baskerville', serif;
 }
