@@ -1,4 +1,5 @@
 import Calendar from '@/components/Calendar'
+import { CalendarErrorBoundary } from '@/components/CalendarErrorBoundary'
 import { Workout } from '@/types/workout'
 
 async function getWorkouts(): Promise<Workout[]> {
@@ -21,7 +22,9 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen p-8">
-      <Calendar workouts={workouts} />
+      <CalendarErrorBoundary>
+        <Calendar workouts={workouts} />
+      </CalendarErrorBoundary>
     </main>
   )
 }
