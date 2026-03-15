@@ -167,6 +167,7 @@ body {
   border-bottom: none;
 }
 
+
 .workout-logger {
   margin-top: 24px;
   padding-top: 24px;
@@ -322,6 +323,24 @@ body {
 .save-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.copy-coach-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--sport-bike);
+  border: none;
+  color: var(--bg-card);
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 150ms ease;
+  border-radius: 2px;
+}
+
+.copy-coach-btn:hover {
+  background: var(--accent-warm);
 }
 
 .logged-indicator {

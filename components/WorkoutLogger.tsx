@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { WorkoutLog } from '@/types/workout'
+import { Workout, WorkoutLog } from '@/types/workout'
 import { LOG_STATUSES } from '@/lib/constants'
+import { formatCoachUpdate } from '@/lib/formatCoachUpdate'
 
 interface WorkoutLoggerProps {
   date: string
+  workout: Workout
   onLogSaved?: (date: string) => void
 }
 
@@ -18,13 +20,15 @@ const STATUS_LABELS: Record<LogStatus, string> = {
   skipped: 'Skipped',
 }
 
-export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) {
+export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLoggerProps) {
   const [status, setStatus] = useState<LogStatus>('completed')
   const [rpe, setRpe] = useState(5)
   const [actualDuration, setActualDuration] = useState('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(true)
   const [saveState, setSaveState] = useState<SaveState>('idle')
+  const [copied, setCopied] = useState(false)
+  const [logData, setLogData] = useState<WorkoutLog | null>(null)
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -40,6 +44,7 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
             setRpe(log.rpe)
             setActualDuration(log.actualDuration || '')
             setNotes(log.notes || '')
+            setLogData(log)
           }
         }
       } catch (e) {
@@ -76,6 +81,8 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
         }),
       })
       if (res.ok) {
+        const saved = await res.json()
+        setLogData(saved)
         setSaveState('saved')
         onLogSaved?.(date)
         savedTimerRef.current = setTimeout(() => setSaveState('idle'), 2000)
@@ -85,6 +92,19 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
     } catch (e) {
       console.error('Failed to save log', e)
       setSaveState('idle')
+    }
+  }
+
+  const handleCopyCoachUpdate = async () => {
+    if (!logData) return
+
+    try {
+      const formatted = formatCoachUpdate(workout, logData)
+      await navigator.clipboard.writeText(formatted)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (e) {
+      console.error('Failed to copy to clipboard', e)
     }
   }
 
@@ -160,6 +180,16 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
       >
         {saveState === 'saving' ? 'Saving...' : saveState === 'saved' ? 'Saved!' : 'Save Log'}
       </button>
+
+      {logData && (
+        <button
+          type="button"
+          onClick={handleCopyCoachUpdate}
+          className="copy-coach-btn"
+        >
+          {copied ? 'Copied!' : 'Copy Coach Update'}
+        </button>
+      )}
     </div>
   )
 }
