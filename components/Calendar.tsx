@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addDays, subDays } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
+import PhaseLegend from './PhaseLegend'
 import WorkoutModal from './WorkoutModal'
 import { getPhaseForWeek } from '@/config/phases'
 import { Workout } from '@/types/workout'
@@ -248,6 +249,8 @@ export default function Calendar({ workouts }: CalendarProps) {
           )
         })}
       </div>
+
+      <PhaseLegend />
 
       <WorkoutModal
         workout={selectedWorkout}
