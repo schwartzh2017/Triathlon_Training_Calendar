@@ -13,6 +13,9 @@ export default function CalendarHeader({ currentDate, onMonthChange }: CalendarH
   useEffect(() => {
     const saved = localStorage.getItem('theme')
     if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      // Reading localStorage on mount is the correct pattern here — localStorage is
+      // not available during SSR, so this effect is the only safe place to sync state.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme('dark')
       // Ensure the DOM attribute matches React state from the first render.
       // The layout inline script sets this before paint, but React state
