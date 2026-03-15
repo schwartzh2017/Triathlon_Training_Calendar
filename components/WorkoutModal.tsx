@@ -3,11 +3,13 @@
 import { useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { Workout, Sport, Phase } from '@/types/workout'
+import WorkoutLogger from './WorkoutLogger'
 
 interface WorkoutModalProps {
   workout: Workout | null
   isOpen: boolean
   onClose: () => void
+  onLogSaved?: (date: string) => void
 }
 
 const sportColors: Record<Sport, string> = {
@@ -36,7 +38,7 @@ const phaseLabels: Record<Phase, string> = {
   taper: 'Taper',
 }
 
-export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalProps) {
+export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: WorkoutModalProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       onClose()
@@ -156,6 +158,11 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
           dangerouslySetInnerHTML={{ __html: workout.body }}
         />
 
+        {/* Workout Logger */}
+        <WorkoutLogger date={workout.date} onLogSaved={() => {
+          onLogSaved?.(workout.date)
+        }} />
+
         {/* Close button */}
         <button
           onClick={onClose}
@@ -166,7 +173,6 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
           ×
         </button>
       </div>
-
     </div>
   )
 }

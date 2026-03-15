@@ -35,6 +35,9 @@ const SPORT_LABELS: Record<string, string> = {
 
 export default function Calendar({ workouts }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 13)) // March 13, 2026
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [loggedDates, setLoggedDates] = useState<Set<string>>(new Set())
 
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentDate)
@@ -58,9 +61,6 @@ export default function Calendar({ workouts }: CalendarProps) {
     return map
   }, [workouts])
 
-  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
   const handleDayClick = useCallback((date: Date) => {
     const workout = workoutMap.get(format(date, 'yyyy-MM-dd')) || null
     if (!workout) return
@@ -70,6 +70,10 @@ export default function Calendar({ workouts }: CalendarProps) {
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)
+  }, [])
+
+  const handleLogSaved = useCallback((date: string) => {
+    setLoggedDates(prev => new Set(prev).add(date))
   }, [])
 
   return (
@@ -112,8 +116,10 @@ export default function Calendar({ workouts }: CalendarProps) {
                 {week.map((day, dayIdx) => {
                   const isCurrentMonth = isSameMonth(day, currentDate)
                   const isTodayDate = isToday(day)
-                  const workout = workoutMap.get(format(day, 'yyyy-MM-dd'))
+                  const dateStr = format(day, 'yyyy-MM-dd')
+                  const workout = workoutMap.get(dateStr)
                   const isMonday = dayIdx === 0
+                  const isLogged = loggedDates.has(dateStr)
 
                   return (
                     <div
@@ -136,6 +142,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                         style={{ fontFamily: "'Tenor Sans', sans-serif", display: 'block' }}
                       >
                         {format(day, 'd')}
+                        {isLogged && <span className="logged-indicator" />}
                       </span>
                       {isMonday && phase && phaseColor && (
                         <span
@@ -179,10 +186,12 @@ export default function Calendar({ workouts }: CalendarProps) {
           )
         })}
       </div>
+
       <WorkoutModal
         workout={selectedWorkout}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onLogSaved={handleLogSaved}
       />
     </div>
   )
