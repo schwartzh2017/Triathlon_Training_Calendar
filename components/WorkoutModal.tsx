@@ -2,7 +2,8 @@
 
 import { useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
-import { Workout, Sport, Phase } from '@/types/workout'
+import { Workout } from '@/types/workout'
+import { SPORT_COLORS, SPORT_LABELS, PHASE_COLORS, PHASE_LABELS } from '@/lib/constants'
 import WorkoutLogger from './WorkoutLogger'
 
 interface WorkoutModalProps {
@@ -12,47 +13,19 @@ interface WorkoutModalProps {
   onLogSaved?: (date: string) => void
 }
 
-const sportColors: Record<Sport, string> = {
-  swim: 'var(--sport-swim)',
-  bike: 'var(--sport-bike)',
-  run: 'var(--sport-run)',
-  strength: 'var(--sport-strength)',
-}
-
-const phaseColors: Record<Phase, string> = {
-  base: 'var(--phase-base)',
-  'race-prep': 'var(--phase-race-prep)',
-  taper: 'var(--phase-taper)',
-}
-
-const sportLabels: Record<Sport, string> = {
-  swim: 'Swim',
-  bike: 'Bike',
-  run: 'Run',
-  strength: 'Strength',
-}
-
-const phaseLabels: Record<Phase, string> = {
-  base: 'Base',
-  'race-prep': 'Race Prep',
-  taper: 'Taper',
-}
-
 export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: WorkoutModalProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose()
-    }
+    if (e.key === 'Escape') onClose()
   }, [onClose])
 
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.overflow = ''
+      }
     }
   }, [isOpen, handleKeyDown])
 
@@ -77,6 +50,8 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
           boxShadow: '4px 8px 32px var(--shadow-strong)',
           maxWidth: '560px',
           width: '90%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
           padding: '32px 36px',
           animation: 'slideIn 200ms ease-out',
         }}
@@ -101,12 +76,12 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
           <span
             className="inline-block px-2 py-1 rounded-[2px] text-xs"
             style={{
-              backgroundColor: phaseColors[workout.phase],
+              backgroundColor: PHASE_COLORS[workout.phase],
               color: '#FAF9F6',
               fontFamily: "'Tenor Sans', sans-serif",
             }}
           >
-            {phaseLabels[workout.phase]}
+            {PHASE_LABELS[workout.phase]}
           </span>
         </div>
 
@@ -117,12 +92,12 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
               key={sport}
               className="inline-flex items-center rounded-[2px] px-2 py-1 text-xs"
               style={{
-                backgroundColor: sportColors[sport],
+                backgroundColor: SPORT_COLORS[sport],
                 color: '#FAF9F6',
                 fontFamily: "'Libre Baskerville', serif",
               }}
             >
-              {sportLabels[sport]}
+              {SPORT_LABELS[sport]}
             </span>
           ))}
         </div>
@@ -159,9 +134,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
         />
 
         {/* Workout Logger */}
-        <WorkoutLogger date={workout.date} onLogSaved={() => {
-          onLogSaved?.(workout.date)
-        }} />
+        <WorkoutLogger date={workout.date} onLogSaved={onLogSaved} />
 
         {/* Close button */}
         <button

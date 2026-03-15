@@ -1,13 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { WorkoutLog } from '@/types/workout'
+import { LOG_STATUSES } from '@/lib/constants'
 
 interface WorkoutLoggerProps {
   date: string
-  onLogSaved?: () => void
+  onLogSaved?: (date: string) => void
 }
 
-type LogStatus = 'completed' | 'modified' | 'skipped'
+type LogStatus = WorkoutLog['status']
+type SaveState = 'idle' | 'saving' | 'saved'
+
+const STATUS_LABELS: Record<LogStatus, string> = {
+  completed: 'Completed',
+  modified: 'Modified',
+  skipped: 'Skipped',
+}
 
 export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) {
   const [status, setStatus] = useState<LogStatus>('completed')
@@ -15,15 +24,17 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
   const [actualDuration, setActualDuration] = useState('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [saveState, setSaveState] = useState<SaveState>('idle')
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
+    const controller = new AbortController()
+
     async function loadLog() {
       try {
-        const res = await fetch(`/api/log?date=${date}`)
+        const res = await fetch(`/api/log?date=${date}`, { signal: controller.signal })
         if (res.ok) {
-          const log = await res.json()
+          const log: WorkoutLog | null = await res.json()
           if (log) {
             setStatus(log.status)
             setRpe(log.rpe)
@@ -32,16 +43,26 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
           }
         }
       } catch (e) {
-        console.error('Failed to load log', e)
+        if ((e as Error).name !== 'AbortError') {
+          console.error('Failed to load log', e)
+        }
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) setLoading(false)
       }
     }
+
     loadLog()
+    return () => controller.abort()
   }, [date])
 
+  useEffect(() => {
+    return () => {
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current)
+    }
+  }, [])
+
   async function handleSave() {
-    setSaving(true)
+    setSaveState('saving')
     try {
       const res = await fetch('/api/log', {
         method: 'POST',
@@ -55,38 +76,37 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
         }),
       })
       if (res.ok) {
-        setSaved(true)
-        onLogSaved?.()
-        setTimeout(() => setSaved(false), 2000)
+        setSaveState('saved')
+        onLogSaved?.(date)
+        savedTimerRef.current = setTimeout(() => setSaveState('idle'), 2000)
+      } else {
+        setSaveState('idle')
       }
     } catch (e) {
       console.error('Failed to save log', e)
-    } finally {
-      setSaving(false)
+      setSaveState('idle')
     }
   }
 
   if (loading) {
-    return <div className="logger-skeleton">Loading...</div>
+    return <div className="workout-logger">Loading...</div>
   }
 
   return (
     <div className="workout-logger">
-      <div className="logger-header">
-        <span className="logger-label">Log Your Workout</span>
-      </div>
+      <span className="logger-label">Log Your Workout</span>
 
       <div className="status-toggle">
         <label className="field-label">Status</label>
         <div className="toggle-buttons">
-          {(['completed', 'modified', 'skipped'] as LogStatus[]).map((s) => (
+          {LOG_STATUSES.map((s) => (
             <button
               key={s}
               type="button"
               className={`status-btn ${status === s ? 'active' : ''}`}
               onClick={() => setStatus(s)}
             >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
+              {STATUS_LABELS[s]}
             </button>
           ))}
         </div>
@@ -135,10 +155,10 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
       <button
         type="button"
         onClick={handleSave}
-        disabled={saving}
+        disabled={saveState === 'saving'}
         className="save-btn"
       >
-        {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Log'}
+        {saveState === 'saving' ? 'Saving...' : saveState === 'saved' ? 'Saved!' : 'Save Log'}
       </button>
     </div>
   )

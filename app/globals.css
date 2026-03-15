@@ -144,16 +144,14 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.logger-header {
-  margin-bottom: 16px;
-}
-
 .logger-label {
+  display: block;
   font-family: 'Tenor Sans', sans-serif;
   font-size: var(--text-sm);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  margin-bottom: 16px;
 }
 
 .field-label {

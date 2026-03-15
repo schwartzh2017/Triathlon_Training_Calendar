@@ -4,34 +4,15 @@ import { useState, useMemo, useCallback } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
 import WorkoutModal from './WorkoutModal'
-import { getPhaseForWeek, Phase } from '@/config/phases'
+import { getPhaseForWeek } from '@/config/phases'
 import { Workout } from '@/types/workout'
+import { SPORT_COLORS, SPORT_LABELS, PHASE_COLORS } from '@/lib/constants'
 
 interface CalendarProps {
   workouts: Workout[]
 }
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
-const PHASE_COLORS: Record<Phase, string> = {
-  'base': 'var(--phase-base)',
-  'race-prep': 'var(--phase-race-prep)',
-  'taper': 'var(--phase-taper)',
-}
-
-const SPORT_COLORS: Record<string, string> = {
-  swim: 'var(--sport-swim)',
-  bike: 'var(--sport-bike)',
-  run: 'var(--sport-run)',
-  strength: 'var(--sport-strength)',
-}
-
-const SPORT_LABELS: Record<string, string> = {
-  swim: 'Swim',
-  bike: 'Bike',
-  run: 'Run',
-  strength: 'Strength',
-}
 
 export default function Calendar({ workouts }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 13)) // March 13, 2026
