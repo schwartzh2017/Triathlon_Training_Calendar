@@ -1,11 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { isSameMonth } from 'date-fns'
 
 interface CalendarHeaderProps {
   currentDate: Date
   onMonthChange: (date: Date) => void
 }
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+]
+
+const TODAY = new Date()
 
 export default function CalendarHeader({ currentDate, onMonthChange }: CalendarHeaderProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -13,13 +21,8 @@ export default function CalendarHeader({ currentDate, onMonthChange }: CalendarH
   useEffect(() => {
     const saved = localStorage.getItem('theme')
     if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      // Reading localStorage on mount is the correct pattern here — localStorage is
-      // not available during SSR, so this effect is the only safe place to sync state.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme('dark')
-      // Ensure the DOM attribute matches React state from the first render.
-      // The layout inline script sets this before paint, but React state
-      // initialises as 'light', so the toggle icon would flash wrong without this.
       document.documentElement.setAttribute('data-theme', 'dark')
     }
   }, [])
@@ -31,65 +34,97 @@ export default function CalendarHeader({ currentDate, onMonthChange }: CalendarH
     localStorage.setItem('theme', newTheme)
   }
 
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ]
-
   const prevMonth = () => {
-    const newDate = new Date(currentDate)
-    newDate.setMonth(newDate.getMonth() - 1)
-    onMonthChange(newDate)
+    const d = new Date(currentDate)
+    d.setMonth(d.getMonth() - 1)
+    onMonthChange(d)
   }
 
   const nextMonth = () => {
-    const newDate = new Date(currentDate)
-    newDate.setMonth(newDate.getMonth() + 1)
-    onMonthChange(newDate)
+    const d = new Date(currentDate)
+    d.setMonth(d.getMonth() + 1)
+    onMonthChange(d)
   }
 
+  const goToToday = () => {
+    onMonthChange(new Date(TODAY))
+  }
+
+  const isOnTodayMonth = isSameMonth(currentDate, TODAY)
+
   return (
-    <header className="flex items-center justify-between mb-8">
-      <h1 
-        className="text-[var(--text-3xl)]" 
-        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+    <header className="mb-8" style={{ fontFamily: "'Tenor Sans', sans-serif" }}>
+      {/* Row 1: App title */}
+      <h1
+        style={{
+          fontFamily: "'Tenor Sans', sans-serif",
+          fontSize: '2.5rem',
+          color: 'var(--text-primary)',
+          marginBottom: '12px',
+          lineHeight: 1.1,
+        }}
       >
-        Triathlon Training
+        PDX Triathlon: May 31, 2026
       </h1>
-      
-      <div 
-        className="flex items-center gap-4"
-        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
-      >
+
+      {/* Row 2: Nav controls */}
+      <div className="flex items-center gap-3">
+        {/* Today button — only shown when not on today's month */}
+        {!isOnTodayMonth && (
+          <button
+            onClick={goToToday}
+            style={{
+              fontFamily: "'Tenor Sans', sans-serif",
+              fontSize: 'var(--text-sm)',
+              color: 'var(--accent-primary)',
+              border: '1px solid var(--accent-primary)',
+              borderRadius: '2px',
+              padding: '4px 12px',
+              background: 'transparent',
+              cursor: 'pointer',
+            }}
+            aria-label="Go to today"
+          >
+            Today
+          </button>
+        )}
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={prevMonth}
+            className="p-2 hover:bg-[var(--bg-secondary)] rounded"
+            aria-label="Previous month"
+          >
+            ←
+          </button>
+
+          <span
+            style={{
+              fontSize: 'var(--text-2xl)',
+              minWidth: '180px',
+              textAlign: 'center',
+            }}
+          >
+            {MONTH_NAMES[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </span>
+
+          <button
+            onClick={nextMonth}
+            className="p-2 hover:bg-[var(--bg-secondary)] rounded"
+            aria-label="Next month"
+          >
+            →
+          </button>
+        </div>
+
         <button
-          onClick={prevMonth}
+          onClick={toggleTheme}
           className="p-2 hover:bg-[var(--bg-secondary)] rounded"
-          aria-label="Previous month"
+          aria-label="Toggle dark mode"
         >
-          ←
-        </button>
-        
-        <span className="text-[var(--text-2xl)] min-w-[180px] text-center">
-          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-        </span>
-        
-        <button
-          onClick={nextMonth}
-          className="p-2 hover:bg-[var(--bg-secondary)] rounded"
-          aria-label="Next month"
-        >
-          →
+          {theme === 'light' ? '☾' : '☀'}
         </button>
       </div>
-
-      <button
-        onClick={toggleTheme}
-        className="p-2 hover:bg-[var(--bg-secondary)] rounded"
-        aria-label="Toggle dark mode"
-        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
-      >
-        {theme === 'light' ? '☾' : '☀'}
-      </button>
     </header>
   )
 }
