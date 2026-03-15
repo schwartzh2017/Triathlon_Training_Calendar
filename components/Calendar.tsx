@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
+import PhaseBanner from './PhaseBanner'
+import { getPhaseForWeek } from '@/config/phases'
 import { Workout } from '@/types/workout'
 
 interface CalendarProps {
@@ -57,42 +59,50 @@ export default function Calendar({ workouts }: CalendarProps) {
       </div>
 
       <div className="grid grid-cols-7 gap-px bg-[var(--border)]">
-        {weeks.map((week, weekIdx) => (
-          <div 
-            key={weekIdx}
-            className="contents"
-          >
-            {week.map(day => {
-              const isCurrentMonth = isSameMonth(day, currentDate)
-              const isTodayDate = isToday(day)
-              const workout = getWorkoutForDate(day)
-              
-              return (
-                <div
-                  key={day.toISOString()}
-                  className={`
-                    min-h-[120px] p-[8px_10px] cursor-pointer
-                    border-l border-t border-[var(--border)]
-                    ${!isCurrentMonth ? 'bg-[var(--bg-secondary)] opacity-50' : 'bg-[var(--bg-card)]'}
-                    ${isTodayDate ? 'border-l-[3px] border-l-[var(--accent-primary)]' : ''}
-                    hover:border-[var(--border-strong)] hover:shadow-md
-                  `}
-                  style={{ transition: 'box-shadow 150ms ease, border-color 150ms ease' }}
-                >
-                  <span 
+        {weeks.map((week, weekIdx) => {
+          const phase = getPhaseForWeek(week)
+          
+          return (
+            <div 
+              key={weekIdx}
+              className="contents relative"
+            >
+              {week.map(day => {
+                const isCurrentMonth = isSameMonth(day, currentDate)
+                const isTodayDate = isToday(day)
+                const workout = getWorkoutForDate(day)
+                
+                return (
+                  <div
+                    key={day.toISOString()}
                     className={`
-                      text-[var(--text-sm)]
-                      ${isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}
+                      min-h-[120px] p-[8px_10px] cursor-pointer
+                      border-l border-t border-[var(--border)]
+                      ${!isCurrentMonth ? 'bg-[var(--bg-secondary)] opacity-50' : 'bg-[var(--bg-card)]'}
+                      ${isTodayDate ? 'border-l-[3px] border-l-[var(--accent-primary)]' : ''}
+                      hover:border-[var(--border-strong)] hover:shadow-md
                     `}
-                    style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+                    style={{ transition: 'box-shadow 150ms ease, border-color 150ms ease' }}
                   >
-                    {format(day, 'd')}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        ))}
+                    <span 
+                      className={`
+                        text-[var(--text-sm)]
+                        ${isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}
+                      `}
+                      style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+                    >
+                      {format(day, 'd')}
+                    </span>
+                  </div>
+                )
+              })}
+              {/* PhaseBanner overlays the entire week row */}
+              <div className="absolute inset-0 -z-10">
+                <PhaseBanner phase={phase} />
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
