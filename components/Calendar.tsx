@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday } from 'date-fns'
+import { useState, useMemo, useCallback, useRef } from 'react'
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addDays, subDays } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
 import WorkoutModal from './WorkoutModal'
 import { getPhaseForWeek } from '@/config/phases'
@@ -19,6 +19,8 @@ export default function Calendar({ workouts }: CalendarProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loggedDates, setLoggedDates] = useState<Set<string>>(new Set())
+  const [focusedDate, setFocusedDate] = useState<string | null>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
 
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentDate)
@@ -42,6 +44,12 @@ export default function Calendar({ workouts }: CalendarProps) {
     return map
   }, [workouts])
 
+  const focusCell = useCallback((dateStr: string) => {
+    setFocusedDate(dateStr)
+    const cell = gridRef.current?.querySelector<HTMLElement>(`[data-date="${dateStr}"]`)
+    cell?.focus()
+  }, [])
+
   const handleDayClick = useCallback((date: Date) => {
     const workout = workoutMap.get(format(date, 'yyyy-MM-dd')) || null
     if (!workout) return
@@ -57,6 +65,40 @@ export default function Calendar({ workouts }: CalendarProps) {
     setLoggedDates(prev => new Set(prev).add(date))
   }, [])
 
+  const handleGridKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!focusedDate) return
+
+    const current = new Date(focusedDate + 'T00:00:00')
+    let next: Date | null = null
+
+    switch (e.key) {
+      case 'ArrowRight':
+        next = addDays(current, 1)
+        break
+      case 'ArrowLeft':
+        next = subDays(current, 1)
+        break
+      case 'ArrowDown':
+        next = addDays(current, 7)
+        break
+      case 'ArrowUp':
+        next = subDays(current, 7)
+        break
+      case 'Enter':
+      case ' ':
+        handleDayClick(current)
+        e.preventDefault()
+        return
+      default:
+        return
+    }
+
+    if (next) {
+      e.preventDefault()
+      focusCell(format(next, 'yyyy-MM-dd'))
+    }
+  }, [focusedDate, focusCell, handleDayClick])
+
   return (
     <div className="max-w-[1100px] mx-auto">
       <CalendarHeader
@@ -67,10 +109,13 @@ export default function Calendar({ workouts }: CalendarProps) {
       <div
         className="grid grid-cols-7 gap-0"
         style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+        role="row"
+        aria-label="Days of week"
       >
         {WEEKDAYS.map(day => (
           <div
             key={day}
+            role="columnheader"
             className="text-center py-2 text-[var(--text-xs)] uppercase tracking-[0.08em] text-[var(--text-muted)]"
           >
             {day}
@@ -78,7 +123,13 @@ export default function Calendar({ workouts }: CalendarProps) {
         ))}
       </div>
 
-      <div className="flex flex-col">
+      <div
+        ref={gridRef}
+        className="flex flex-col"
+        role="grid"
+        aria-label="Training calendar"
+        onKeyDown={handleGridKeyDown}
+      >
         {weeks.map((week, weekIdx) => {
           const phase = getPhaseForWeek(week)
           const phaseColor = phase ? PHASE_COLORS[phase.name] : undefined
@@ -86,6 +137,7 @@ export default function Calendar({ workouts }: CalendarProps) {
           return (
             <div
               key={weekIdx}
+              role="row"
               style={{
                 borderLeft: `5px solid ${phaseColor ?? 'transparent'}`,
                 backgroundColor: phaseColor
@@ -102,10 +154,22 @@ export default function Calendar({ workouts }: CalendarProps) {
                   const isMonday = dayIdx === 0
                   const isLogged = loggedDates.has(dateStr)
 
+                  const ariaLabel = [
+                    format(day, 'EEEE, MMMM d'),
+                    workout ? workout.sports.map(s => SPORT_LABELS[s]).join(', ') : 'Rest day',
+                    isLogged ? 'Logged' : '',
+                  ].filter(Boolean).join(' — ')
+
                   return (
                     <div
                       key={day.toISOString()}
+                      role="gridcell"
+                      tabIndex={0}
+                      data-date={dateStr}
+                      aria-label={ariaLabel}
+                      aria-selected={focusedDate === dateStr}
                       onClick={() => handleDayClick(day)}
+                      onFocus={() => setFocusedDate(dateStr)}
                       className={`
                         calendar-day-cell
                         min-h-[120px] p-[8px_10px] cursor-pointer
@@ -113,6 +177,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                         ${!isCurrentMonth ? 'bg-[var(--bg-secondary)] opacity-50' : 'bg-[var(--bg-card)]'}
                         ${isTodayDate ? 'border-l-[3px] border-l-[var(--accent-primary)]' : ''}
                         hover:border-[var(--border-strong)] hover:shadow-md
+                        focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-inset
                       `}
                       style={{ transition: 'box-shadow 150ms ease, border-color 150ms ease' }}
                     >
@@ -124,10 +189,11 @@ export default function Calendar({ workouts }: CalendarProps) {
                         style={{ fontFamily: "'Tenor Sans', sans-serif", display: 'block' }}
                       >
                         {format(day, 'd')}
-                        {isLogged && <span className="logged-indicator" />}
+                        {isLogged && <span className="logged-indicator" aria-hidden="true" />}
                       </span>
                       {isMonday && phase && phaseColor && (
                         <span
+                          aria-hidden="true"
                           style={{
                             display: 'block',
                             marginTop: '6px',
@@ -142,7 +208,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                         </span>
                       )}
                       {workout && workout.sports.length > 0 && (
-                        <div className="mt-1">
+                        <div className="mt-1" aria-hidden="true">
                           {workout.sports.map(sport => (
                             <span
                               key={sport}

@@ -357,6 +357,11 @@ body {
   vertical-align: middle;
 }
 
+.calendar-day-cell:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
+}
+
 @media (max-width: 768px) {
   .calendar-day-cell {
     min-height: 80px !important;
