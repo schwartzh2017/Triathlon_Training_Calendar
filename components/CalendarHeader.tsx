@@ -14,6 +14,10 @@ export default function CalendarHeader({ currentDate, onMonthChange }: CalendarH
     const saved = localStorage.getItem('theme')
     if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setTheme('dark')
+      // Ensure the DOM attribute matches React state from the first render.
+      // The layout inline script sets this before paint, but React state
+      // initialises as 'light', so the toggle icon would flash wrong without this.
+      document.documentElement.setAttribute('data-theme', 'dark')
     }
   }, [])
 

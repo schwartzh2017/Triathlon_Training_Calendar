@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { Workout } from '@/types/workout'
 import { SPORT_COLORS, SPORT_LABELS, PHASE_COLORS, PHASE_LABELS } from '@/lib/constants'
@@ -14,6 +14,8 @@ interface WorkoutModalProps {
 }
 
 export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: WorkoutModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose()
   }, [onClose])
@@ -22,6 +24,9 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
+      // Move focus into the dialog so screen readers and keyboard users
+      // are not left behind the overlay on the calendar grid.
+      dialogRef.current?.focus()
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
         document.body.style.overflow = ''
@@ -44,6 +49,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
       }}
     >
       <div
+        ref={dialogRef}
         className="relative bg-[var(--bg-card)] border rounded-[2px] shadow-lg"
         style={{
           borderColor: 'var(--border-strong)',
@@ -58,6 +64,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
         role="dialog"
         aria-modal="true"
         aria-labelledby="workout-modal-title"
+        tabIndex={-1}
       >
         {/* Date line */}
         <div

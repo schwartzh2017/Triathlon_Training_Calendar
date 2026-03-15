@@ -115,29 +115,28 @@ export default function Calendar({ workouts }: CalendarProps) {
       />
 
       <div
-        className="grid grid-cols-7 gap-0"
-        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
-        role="row"
-        aria-label="Days of week"
-      >
-        {WEEKDAYS.map(day => (
-          <div
-            key={day}
-            role="columnheader"
-            className="text-center py-2 text-[var(--text-xs)] uppercase tracking-[0.08em] text-[var(--text-muted)]"
-          >
-            {day}
-          </div>
-        ))}
-      </div>
-
-      <div
         ref={gridRef}
         className="flex flex-col"
         role="grid"
         aria-label="Training calendar"
+        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
         onKeyDown={handleGridKeyDown}
       >
+        {/* Weekday headers must be inside role="grid" to satisfy ARIA ownership */}
+        <div
+          className="grid grid-cols-7 gap-0"
+          role="row"
+        >
+          {WEEKDAYS.map(day => (
+            <div
+              key={day}
+              role="columnheader"
+              className="text-center py-2 text-[var(--text-xs)] uppercase tracking-[0.08em] text-[var(--text-muted)]"
+            >
+              {day}
+            </div>
+          ))}
+        </div>
         {weeks.map((week, weekIdx) => {
           const phase = getPhaseForWeek(week)
           const phaseColor = phase ? PHASE_COLORS[phase.name] : undefined
@@ -153,7 +152,8 @@ export default function Calendar({ workouts }: CalendarProps) {
                   : undefined,
               }}
             >
-              <div className="grid grid-cols-7 gap-px bg-[var(--border)]">
+              {/* role="presentation" lets the CSS grid exist without breaking the row→gridcell ARIA ownership chain */}
+              <div role="presentation" className="grid grid-cols-7 gap-px bg-[var(--border)]">
                 {week.map((day, dayIdx) => {
                   const isCurrentMonth = isSameMonth(day, currentDate)
                   const isTodayDate = isToday(day)
