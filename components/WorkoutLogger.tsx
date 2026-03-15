@@ -1,15 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Workout, WorkoutLog } from '@/types/workout'
+import { formatCoachUpdate } from '@/lib/formatCoachUpdate'
 
 interface WorkoutLoggerProps {
   date: string
+  workout: Workout
   onLogSaved?: () => void
 }
 
 type LogStatus = 'completed' | 'modified' | 'skipped'
 
-export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) {
+export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLoggerProps) {
   const [status, setStatus] = useState<LogStatus>('completed')
   const [rpe, setRpe] = useState(5)
   const [actualDuration, setActualDuration] = useState('')
@@ -17,6 +20,8 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [logData, setLogData] = useState<WorkoutLog | null>(null)
 
   useEffect(() => {
     async function loadLog() {
@@ -29,6 +34,7 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
             setRpe(log.rpe)
             setActualDuration(log.actualDuration || '')
             setNotes(log.notes || '')
+            setLogData(log)
           }
         }
       } catch (e) {
@@ -64,6 +70,15 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
     } finally {
       setSaving(false)
     }
+  }
+
+  const handleCopyCoachUpdate = async () => {
+    if (!logData) return
+
+    const formatted = formatCoachUpdate(workout, logData)
+    await navigator.clipboard.writeText(formatted)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   if (loading) {
@@ -140,6 +155,16 @@ export default function WorkoutLogger({ date, onLogSaved }: WorkoutLoggerProps) 
       >
         {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Log'}
       </button>
+
+      {logData && (
+        <button
+          type="button"
+          onClick={handleCopyCoachUpdate}
+          className="copy-coach-btn"
+        >
+          {copied ? 'Copied!' : 'Copy Coach Update'}
+        </button>
+      )}
     </div>
   )
 }

@@ -159,9 +159,13 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
         />
 
         {/* Workout Logger */}
-        <WorkoutLogger date={workout.date} onLogSaved={() => {
-          onLogSaved?.(workout.date)
-        }} />
+        <WorkoutLogger 
+          date={workout.date} 
+          workout={workout}
+          onLogSaved={() => {
+            onLogSaved?.(workout.date)
+          }} 
+        />
 
         {/* Close button */}
         <button
