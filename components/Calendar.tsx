@@ -107,6 +107,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                       key={day.toISOString()}
                       onClick={() => handleDayClick(day)}
                       className={`
+                        calendar-day-cell
                         min-h-[120px] p-[8px_10px] cursor-pointer
                         border-l border-t border-[var(--border)]
                         ${!isCurrentMonth ? 'bg-[var(--bg-secondary)] opacity-50' : 'bg-[var(--bg-card)]'}
@@ -145,7 +146,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                           {workout.sports.map(sport => (
                             <span
                               key={sport}
-                              className="inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
+                              className="calendar-sport-pill inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
                               style={{
                                 backgroundColor: SPORT_COLORS[sport],
                                 color: '#FAF9F6',
