@@ -68,3 +68,72 @@ body {
   color: var(--text-primary);
   font-family: 'Libre Baskerville', serif;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.prose h2 {
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: var(--text-base);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--text-primary);
+}
+
+.prose h3 {
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: var(--text-sm);
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: var(--text-secondary);
+}
+
+.prose ul {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.prose li {
+  margin-bottom: 0.25em;
+}
+
+.prose em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.prose code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-sm);
+  background: var(--bg-secondary);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.prose pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-sm);
+  background: var(--bg-secondary);
+  padding: 12px;
+  border-radius: 2px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}

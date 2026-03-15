@@ -69,7 +69,7 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
       }}
     >
       <div
-        className="bg-[var(--bg-card)] border rounded-[2px] shadow-lg"
+        className="relative bg-[var(--bg-card)] border rounded-[2px] shadow-lg"
         style={{
           borderColor: 'var(--border-strong)',
           boxShadow: '4px 8px 32px var(--shadow-strong)',
@@ -80,6 +80,7 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
         }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby="workout-modal-title"
       >
         {/* Date line */}
         <div
@@ -126,6 +127,7 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
 
         {/* Workout title */}
         <h2
+          id="workout-modal-title"
           className="mb-4"
           style={{
             fontFamily: "'Tenor Sans', sans-serif",
@@ -165,67 +167,6 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
         </button>
       </div>
 
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .prose h2 {
-          font-family: 'Tenor Sans', sans-serif;
-          font-size: var(--text-base);
-          margin-top: 1.5em;
-          margin-bottom: 0.5em;
-          color: var(--text-primary);
-        }
-        .prose h3 {
-          font-family: 'Tenor Sans', sans-serif;
-          font-size: var(--text-sm);
-          margin-top: 1em;
-          margin-bottom: 0.5em;
-          color: var(--text-secondary);
-        }
-        .prose ul {
-          margin-left: 1.5em;
-          margin-bottom: 1em;
-        }
-        .prose li {
-          margin-bottom: 0.25em;
-        }
-        .prose em {
-          font-style: italic;
-          color: var(--text-secondary);
-        }
-        .prose code {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: var(--text-sm);
-          background: var(--bg-secondary);
-          padding: 2px 4px;
-          border-radius: 2px;
-        }
-        .prose pre {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: var(--text-sm);
-          background: var(--bg-secondary);
-          padding: 12px;
-          border-radius: 2px;
-          overflow-x: auto;
-          margin: 1em 0;
-        }
-        .prose pre code {
-          background: none;
-          padding: 0;
-        }
-      `}</style>
     </div>
   )
 }

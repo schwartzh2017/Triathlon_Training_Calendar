@@ -14,6 +14,20 @@ interface CalendarProps {
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+const SPORT_COLORS: Record<string, string> = {
+  swim: 'var(--sport-swim)',
+  bike: 'var(--sport-bike)',
+  run: 'var(--sport-run)',
+  strength: 'var(--sport-strength)',
+}
+
+const SPORT_LABELS: Record<string, string> = {
+  swim: 'Swim',
+  bike: 'Bike',
+  run: 'Run',
+  strength: 'Strength',
+}
+
 export default function Calendar({ workouts }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 13)) // March 13, 2026
 
@@ -33,19 +47,25 @@ export default function Calendar({ workouts }: CalendarProps) {
     return result
   }, [days])
 
+  const workoutMap = useMemo(() => {
+    const map = new Map<string, Workout>()
+    workouts.forEach(w => map.set(w.date, w))
+    return map
+  }, [workouts])
+
   function getWorkoutForDate(date: Date): Workout | undefined {
-    const dateStr = format(date, 'yyyy-MM-dd')
-    return workouts.find(w => w.date === dateStr)
+    return workoutMap.get(format(date, 'yyyy-MM-dd'))
   }
 
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleDayClick = useCallback((date: Date) => {
-    const workout = getWorkoutForDate(date) || null
+    const workout = workoutMap.get(format(date, 'yyyy-MM-dd')) || null
+    if (!workout) return
     setSelectedWorkout(workout)
     setIsModalOpen(true)
-  }, [])
+  }, [workoutMap])
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)
@@ -111,36 +131,21 @@ export default function Calendar({ workouts }: CalendarProps) {
                     
                     {workout && workout.sports.length > 0 && (
                       <div className="mt-1">
-                        {workout.sports.map(sport => {
-                          const sportColorVars: Record<string, string> = {
-                            swim: 'var(--sport-swim)',
-                            bike: 'var(--sport-bike)',
-                            run: 'var(--sport-run)',
-                            strength: 'var(--sport-strength)',
-                          }
-                          const labels: Record<string, string> = {
-                            swim: 'Swim',
-                            bike: 'Bike',
-                            run: 'Run',
-                            strength: 'Strength',
-                          }
-
-                          return (
-                            <span
-                              key={sport}
-                              className="inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
-                              style={{
-                                backgroundColor: sportColorVars[sport],
-                                color: '#FAF9F6',
-                                fontFamily: "'Libre Baskerville', serif",
-                                fontSize: 'var(--text-xs)',
-                                margin: '2px 2px 0 0',
-                              }}
-                            >
-                              {labels[sport]}
-                            </span>
-                          )
-                        })}
+                        {workout.sports.map(sport => (
+                          <span
+                            key={sport}
+                            className="inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
+                            style={{
+                              backgroundColor: SPORT_COLORS[sport],
+                              color: '#FAF9F6',
+                              fontFamily: "'Libre Baskerville', serif",
+                              fontSize: 'var(--text-xs)',
+                              margin: '2px 2px 0 0',
+                            }}
+                          >
+                            {SPORT_LABELS[sport]}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>
