@@ -37,14 +37,19 @@ export function getPhaseForDate(date: string): PhaseConfig | undefined {
   })
 }
 
+function parseLocalDate(isoDate: string): Date {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return new Date(year, month - 1, day) // local midnight, no UTC offset issue
+}
+
 export function getPhaseForWeek(weekDates: Date[]): PhaseConfig | undefined {
   if (weekDates.length === 0) {
     return undefined
   }
-  
+
   const phaseCounts = phases.map(phase => {
-    const start = new Date(phase.startDate)
-    const end = new Date(phase.endDate)
+    const start = parseLocalDate(phase.startDate)
+    const end = parseLocalDate(phase.endDate)
     const count = weekDates.filter(date => date >= start && date <= end).length
     return { phase, count }
   })
