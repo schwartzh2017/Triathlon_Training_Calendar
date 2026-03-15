@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Workout, WorkoutLog } from '@/types/workout'
-import { formatCoachUpdate } from '@/lib/formatCoachUpdate'
+import { formatCoachUpdate, capitalizeFirstLetter } from '@/lib/formatCoachUpdate'
 
 interface WorkoutLoggerProps {
   date: string
@@ -101,7 +101,7 @@ export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLogg
               className={`status-btn ${status === s ? 'active' : ''}`}
               onClick={() => setStatus(s)}
             >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
+              {capitalizeFirstLetter(s)}
             </button>
           ))}
         </div>

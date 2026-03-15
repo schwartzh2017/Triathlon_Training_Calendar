@@ -1,5 +1,9 @@
 import { Workout, WorkoutLog } from '@/types/workout'
 
+function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 export function formatCoachUpdate(workout: Workout, log: WorkoutLog): string {
   const dateStr = new Date(workout.date).toLocaleDateString('en-US', {
     weekday: 'long',
@@ -9,25 +13,30 @@ export function formatCoachUpdate(workout: Workout, log: WorkoutLog): string {
   })
 
   const sports = workout.sports
-    .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+    .map(s => capitalizeFirstLetter(s))
     .join(', ')
 
-  const statusLabel = log.status.charAt(0).toUpperCase() + log.status.slice(1)
+  const statusLabel = capitalizeFirstLetter(log.status)
 
-  let output = `WORKOUT LOG — ${dateStr}\n`
-  output += `Phase: ${workout.phase.charAt(0).toUpperCase() + workout.phase.slice(1)}  |  Sports: ${sports}\n\n`
-  output += `Planned: ${workout.summary}\n`
-  output += `Status: ${statusLabel}\n`
+  const lines = [
+    `WORKOUT LOG — ${dateStr}`,
+    `Phase: ${capitalizeFirstLetter(workout.phase)}  |  Sports: ${sports}`,
+    '',
+    `Planned: ${workout.summary}`,
+    `Status: ${statusLabel}`,
+  ]
 
   if (log.actualDuration) {
-    output += `Actual Duration: ${log.actualDuration}\n`
+    lines.push(`Actual Duration: ${log.actualDuration}`)
   }
 
-  output += `RPE: ${log.rpe}/10\n`
+  lines.push(`RPE: ${log.rpe}/10`)
 
   if (log.notes) {
-    output += `\nNotes:\n${log.notes}\n`
+    lines.push('', `Notes:`, log.notes)
   }
 
-  return output
+  return lines.join('\n')
 }
+
+export { capitalizeFirstLetter }
