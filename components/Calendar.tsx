@@ -167,6 +167,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                   const dateStr = format(day, 'yyyy-MM-dd')
                   const workout = workoutMap.get(dateStr)
                   const isLogged = loggedDates.has(dateStr)
+                  const isRaceDay = dateStr === '2026-05-31'
 
                   const ariaLabel = [
                     format(day, 'EEEE, MMMM d'),
@@ -222,6 +223,21 @@ export default function Calendar({ workouts }: CalendarProps) {
                               {SPORT_LABELS[sport]}
                             </span>
                           ))}
+                        </div>
+                      )}
+                      {isRaceDay && (
+                        <div
+                          style={{
+                            marginTop: '6px',
+                            fontFamily: "'Tenor Sans', sans-serif",
+                            fontSize: 'var(--text-base)',
+                            color: 'var(--accent-primary)',
+                            fontWeight: 'bold',
+                            lineHeight: 1.2,
+                          }}
+                          aria-label="Race Day"
+                        >
+                          RACE DAY 🎉
                         </div>
                       )}
                     </div>
