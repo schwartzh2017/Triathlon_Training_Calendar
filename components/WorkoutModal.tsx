@@ -79,6 +79,8 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
           width: '90%',
           padding: '32px 36px',
           animation: 'slideIn 200ms ease-out',
+          maxHeight: '90vh',
+          overflowY: 'auto',
         }}
         role="dialog"
         aria-modal="true"

@@ -24,9 +24,11 @@ export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLogg
   const [logData, setLogData] = useState<WorkoutLog | null>(null)
 
   useEffect(() => {
+    const controller = new AbortController()
+
     async function loadLog() {
       try {
-        const res = await fetch(`/api/log?date=${date}`)
+        const res = await fetch(`/api/log?date=${date}`, { signal: controller.signal })
         if (res.ok) {
           const log = await res.json()
           if (log) {
@@ -38,12 +40,18 @@ export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLogg
           }
         }
       } catch (e) {
-        console.error('Failed to load log', e)
+        if (e instanceof Error && e.name !== 'AbortError') {
+          console.error('Failed to load log', e)
+        }
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
       }
     }
+
     loadLog()
+    return () => controller.abort()
   }, [date])
 
   async function handleSave() {
@@ -61,6 +69,8 @@ export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLogg
         }),
       })
       if (res.ok) {
+        const saved = await res.json()
+        setLogData(saved)
         setSaved(true)
         onLogSaved?.()
         setTimeout(() => setSaved(false), 2000)
@@ -75,10 +85,14 @@ export default function WorkoutLogger({ date, workout, onLogSaved }: WorkoutLogg
   const handleCopyCoachUpdate = async () => {
     if (!logData) return
 
-    const formatted = formatCoachUpdate(workout, logData)
-    await navigator.clipboard.writeText(formatted)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      const formatted = formatCoachUpdate(workout, logData)
+      await navigator.clipboard.writeText(formatted)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (e) {
+      console.error('Failed to copy to clipboard', e)
+    }
   }
 
   if (loading) {

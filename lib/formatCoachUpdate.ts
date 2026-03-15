@@ -1,5 +1,11 @@
 import { Workout, WorkoutLog } from '@/types/workout'
 
+const phaseLabels: Record<string, string> = {
+  base: 'Base',
+  'race-prep': 'Race Prep',
+  taper: 'Taper',
+}
+
 function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -20,7 +26,7 @@ export function formatCoachUpdate(workout: Workout, log: WorkoutLog): string {
 
   const lines = [
     `WORKOUT LOG — ${dateStr}`,
-    `Phase: ${capitalizeFirstLetter(workout.phase)}  |  Sports: ${sports}`,
+    `Phase: ${phaseLabels[workout.phase] ?? capitalizeFirstLetter(workout.phase)}  |  Sports: ${sports}`,
     '',
     `Planned: ${workout.summary}`,
     `Status: ${statusLabel}`,
