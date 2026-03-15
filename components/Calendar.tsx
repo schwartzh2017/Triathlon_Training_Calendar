@@ -166,7 +166,6 @@ export default function Calendar({ workouts }: CalendarProps) {
                   const isTodayDate = isToday(day)
                   const dateStr = format(day, 'yyyy-MM-dd')
                   const workout = workoutMap.get(dateStr)
-                  const isMonday = dayIdx === 0
                   const isLogged = loggedDates.has(dateStr)
 
                   const ariaLabel = [
@@ -206,22 +205,6 @@ export default function Calendar({ workouts }: CalendarProps) {
                         {format(day, 'd')}
                         {isLogged && <span className="logged-indicator" aria-hidden="true" />}
                       </span>
-                      {isMonday && phase && phaseColor && (
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            display: 'block',
-                            marginTop: '6px',
-                            fontSize: 'var(--text-xs)',
-                            fontFamily: "'Tenor Sans', sans-serif",
-                            color: phaseColor,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.10em',
-                          }}
-                        >
-                          {phase.label}
-                        </span>
-                      )}
                       {workout && workout.sports.length > 0 && (
                         <div className="mt-1" aria-hidden="true">
                           {workout.sports.map(sport => (
