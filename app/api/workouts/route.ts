@@ -4,12 +4,13 @@ import path from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
 import html from 'remark-html'
+import remarkGfm from 'remark-gfm'
 import { Workout } from '@/types/workout'
 
 const workoutsDirectory = path.join(process.cwd(), 'workouts')
 
 async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await remark().use(html).process(markdown)
+  const result = await remark().use(remarkGfm).use(html).process(markdown)
   return result.toString()
 }
 

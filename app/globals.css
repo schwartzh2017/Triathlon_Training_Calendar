@@ -138,6 +138,35 @@ body {
   padding: 0;
 }
 
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Libre Baskerville', serif;
+  font-size: var(--text-sm);
+  margin: 1em 0;
+}
+
+.prose th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: 'Tenor Sans', sans-serif;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.prose td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
 .workout-logger {
   margin-top: 24px;
   padding-top: 24px;
