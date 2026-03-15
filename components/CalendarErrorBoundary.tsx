@@ -1,6 +1,6 @@
 'use client'
 
-import { Component, ReactNode } from 'react'
+import { Component, ReactNode, ErrorInfo } from 'react'
 
 interface Props {
   children: ReactNode
@@ -20,8 +20,8 @@ export class CalendarErrorBoundary extends Component<Props, State> {
     return { hasError: true }
   }
 
-  componentDidCatch(error: Error) {
-    console.error('Calendar render error:', error)
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Calendar render error:', error, info.componentStack)
   }
 
   render() {

@@ -65,6 +65,11 @@ export default function Calendar({ workouts }: CalendarProps) {
     setLoggedDates(prev => new Set(prev).add(date))
   }, [])
 
+  const visibleDateSet = useMemo(() => new Set(days.map(d => format(d, 'yyyy-MM-dd'))), [days])
+
+  // Roving tabIndex: only the active cell (or the first cell as fallback) is reachable via Tab.
+  const rovingTabDate = focusedDate ?? (days.length > 0 ? format(days[0], 'yyyy-MM-dd') : null)
+
   const handleGridKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!focusedDate) return
 
@@ -95,9 +100,12 @@ export default function Calendar({ workouts }: CalendarProps) {
 
     if (next) {
       e.preventDefault()
-      focusCell(format(next, 'yyyy-MM-dd'))
+      const nextStr = format(next, 'yyyy-MM-dd')
+      if (visibleDateSet.has(nextStr)) {
+        focusCell(nextStr)
+      }
     }
-  }, [focusedDate, focusCell, handleDayClick])
+  }, [focusedDate, focusCell, handleDayClick, visibleDateSet])
 
   return (
     <div className="max-w-[1100px] mx-auto">
@@ -164,7 +172,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                     <div
                       key={day.toISOString()}
                       role="gridcell"
-                      tabIndex={0}
+                      tabIndex={dateStr === rovingTabDate ? 0 : -1}
                       data-date={dateStr}
                       aria-label={ariaLabel}
                       aria-selected={focusedDate === dateStr}

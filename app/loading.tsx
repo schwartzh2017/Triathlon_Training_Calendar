@@ -4,29 +4,10 @@ export default function Loading() {
       <div className="max-w-[1100px] mx-auto">
         {/* Header skeleton */}
         <div className="flex items-center justify-between mb-6">
-          <div
-            className="h-8 w-40 rounded-[2px]"
-            style={{
-              background: 'var(--bg-secondary)',
-              animation: 'pulse 1.5s ease-in-out infinite',
-            }}
-          />
+          <div className="skeleton h-8 w-40 rounded-[2px]" />
           <div className="flex gap-2">
-            <div
-              className="h-8 w-8 rounded-[2px]"
-              style={{
-                background: 'var(--bg-secondary)',
-                animation: 'pulse 1.5s ease-in-out infinite',
-              }}
-            />
-            <div
-              className="h-8 w-8 rounded-[2px]"
-              style={{
-                background: 'var(--bg-secondary)',
-                animation: 'pulse 1.5s ease-in-out infinite',
-                animationDelay: '0.1s',
-              }}
-            />
+            <div className="skeleton h-8 w-8 rounded-[2px]" />
+            <div className="skeleton h-8 w-8 rounded-[2px]" style={{ animationDelay: '0.1s' }} />
           </div>
         </div>
 
@@ -35,12 +16,8 @@ export default function Loading() {
           {Array.from({ length: 7 }).map((_, i) => (
             <div
               key={i}
-              className="h-8"
-              style={{
-                background: 'var(--bg-secondary)',
-                animation: 'pulse 1.5s ease-in-out infinite',
-                animationDelay: `${i * 0.05}s`,
-              }}
+              className="skeleton h-8"
+              style={{ animationDelay: `${i * 0.05}s` }}
             />
           ))}
         </div>
@@ -55,32 +32,20 @@ export default function Loading() {
             >
               {/* Day number */}
               <div
-                className="w-6 h-5 rounded-[2px] mb-2"
-                style={{
-                  background: 'var(--bg-secondary)',
-                  animation: 'pulse 1.5s ease-in-out infinite',
-                  animationDelay: `${(i % 7) * 0.05}s`,
-                }}
+                className="skeleton w-6 h-5 rounded-[2px] mb-2"
+                style={{ animationDelay: `${(i % 7) * 0.05}s` }}
               />
               {/* Fake pills — only some cells */}
               {i % 3 !== 0 && (
                 <div className="flex gap-1 flex-wrap">
                   <div
-                    className="h-4 w-10 rounded-[2px]"
-                    style={{
-                      background: 'var(--bg-secondary)',
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                      animationDelay: `${0.2 + (i % 7) * 0.05}s`,
-                    }}
+                    className="skeleton h-4 w-10 rounded-[2px]"
+                    style={{ animationDelay: `${0.2 + (i % 7) * 0.05}s` }}
                   />
                   {i % 5 === 0 && (
                     <div
-                      className="h-4 w-8 rounded-[2px]"
-                      style={{
-                        background: 'var(--bg-secondary)',
-                        animation: 'pulse 1.5s ease-in-out infinite',
-                        animationDelay: `${0.35 + (i % 7) * 0.05}s`,
-                      }}
+                      className="skeleton h-4 w-8 rounded-[2px]"
+                      style={{ animationDelay: `${0.35 + (i % 7) * 0.05}s` }}
                     />
                   )}
                 </div>
@@ -89,13 +54,6 @@ export default function Loading() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-      `}</style>
     </main>
   )
 }
