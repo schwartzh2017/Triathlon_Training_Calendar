@@ -3,11 +3,13 @@
 import { useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { Workout, Sport, Phase } from '@/types/workout'
+import WorkoutLogger from './WorkoutLogger'
 
 interface WorkoutModalProps {
   workout: Workout | null
   isOpen: boolean
   onClose: () => void
+  onLogSaved?: (date: string) => void
 }
 
 const sportColors: Record<Sport, string> = {
@@ -36,7 +38,7 @@ const phaseLabels: Record<Phase, string> = {
   taper: 'Taper',
 }
 
-export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalProps) {
+export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: WorkoutModalProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       onClose()
@@ -156,6 +158,11 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
           dangerouslySetInnerHTML={{ __html: workout.body }}
         />
 
+        {/* Workout Logger */}
+        <WorkoutLogger date={workout.date} onLogSaved={() => {
+          onLogSaved?.(workout.date)
+        }} />
+
         {/* Close button */}
         <button
           onClick={onClose}
@@ -167,6 +174,67 @@ export default function WorkoutModal({ workout, isOpen, onClose }: WorkoutModalP
         </button>
       </div>
 
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .prose h2 {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: var(--text-base);
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          color: var(--text-primary);
+        }
+        .prose h3 {
+          font-family: 'Tenor Sans', sans-serif;
+          font-size: var(--text-sm);
+          margin-top: 1em;
+          margin-bottom: 0.5em;
+          color: var(--text-secondary);
+        }
+        .prose ul {
+          margin-left: 1.5em;
+          margin-bottom: 1em;
+        }
+        .prose li {
+          margin-bottom: 0.25em;
+        }
+        .prose em {
+          font-style: italic;
+          color: var(--text-secondary);
+        }
+        .prose code {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: var(--text-sm);
+          background: var(--bg-secondary);
+          padding: 2px 4px;
+          border-radius: 2px;
+        }
+        .prose pre {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: var(--text-sm);
+          background: var(--bg-secondary);
+          padding: 12px;
+          border-radius: 2px;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+        .prose pre code {
+          background: none;
+          padding: 0;
+        }
+      `}</style>
     </div>
   )
 }
