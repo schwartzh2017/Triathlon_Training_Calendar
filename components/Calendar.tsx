@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
 import PhaseBanner from './PhaseBanner'
+import WorkoutModal from './WorkoutModal'
 import { getPhaseForWeek } from '@/config/phases'
 import { Workout } from '@/types/workout'
 
@@ -36,6 +37,19 @@ export default function Calendar({ workouts }: CalendarProps) {
     const dateStr = format(date, 'yyyy-MM-dd')
     return workouts.find(w => w.date === dateStr)
   }
+
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleDayClick = useCallback((date: Date) => {
+    const workout = getWorkoutForDate(date) || null
+    setSelectedWorkout(workout)
+    setIsModalOpen(true)
+  }, [])
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false)
+  }, [])
 
   return (
     <div className="max-w-[1100px] mx-auto">
@@ -75,6 +89,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                 return (
                   <div
                     key={day.toISOString()}
+                    onClick={() => handleDayClick(day)}
                     className={`
                       min-h-[120px] p-[8px_10px] cursor-pointer
                       border-l border-t border-[var(--border)]
@@ -89,10 +104,45 @@ export default function Calendar({ workouts }: CalendarProps) {
                         text-[var(--text-sm)]
                         ${isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}
                       `}
-                      style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+                      style={{ fontFamily: "'Tenor Sans', sans-serif", display: 'block' }}
                     >
                       {format(day, 'd')}
                     </span>
+                    
+                    {workout && workout.sports.length > 0 && (
+                      <div className="mt-1">
+                        {workout.sports.map(sport => {
+                          const sportColorVars: Record<string, string> = {
+                            swim: 'var(--sport-swim)',
+                            bike: 'var(--sport-bike)',
+                            run: 'var(--sport-run)',
+                            strength: 'var(--sport-strength)',
+                          }
+                          const labels: Record<string, string> = {
+                            swim: 'Swim',
+                            bike: 'Bike',
+                            run: 'Run',
+                            strength: 'Strength',
+                          }
+
+                          return (
+                            <span
+                              key={sport}
+                              className="inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
+                              style={{
+                                backgroundColor: sportColorVars[sport],
+                                color: '#FAF9F6',
+                                fontFamily: "'Libre Baskerville', serif",
+                                fontSize: 'var(--text-xs)',
+                                margin: '2px 2px 0 0',
+                              }}
+                            >
+                              {labels[sport]}
+                            </span>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -104,6 +154,11 @@ export default function Calendar({ workouts }: CalendarProps) {
           )
         })}
       </div>
+      <WorkoutModal
+        workout={selectedWorkout}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }
