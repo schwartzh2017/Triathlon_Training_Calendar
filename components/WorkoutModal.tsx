@@ -35,7 +35,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        background: 'rgba(30, 28, 25, 0.55)',
+        background: 'var(--overlay-bg)',
         backdropFilter: 'blur(3px)',
         animation: 'fadeIn 150ms ease-in',
       }}
@@ -77,7 +77,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
             className="inline-block px-2 py-1 rounded-[2px] text-xs"
             style={{
               backgroundColor: PHASE_COLORS[workout.phase],
-              color: '#FAF9F6',
+              color: 'var(--text-on-badge)',
               fontFamily: "'Tenor Sans', sans-serif",
             }}
           >
@@ -93,7 +93,7 @@ export default function WorkoutModal({ workout, isOpen, onClose, onLogSaved }: W
               className="inline-flex items-center rounded-[2px] px-2 py-1 text-xs"
               style={{
                 backgroundColor: SPORT_COLORS[sport],
-                color: '#FAF9F6',
+                color: 'var(--text-on-badge)',
                 fontFamily: "'Libre Baskerville', serif",
               }}
             >

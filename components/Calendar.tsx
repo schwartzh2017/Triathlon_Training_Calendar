@@ -149,7 +149,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                               className="calendar-sport-pill inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
                               style={{
                                 backgroundColor: SPORT_COLORS[sport],
-                                color: '#FAF9F6',
+                                color: 'var(--text-on-badge)',
                                 fontFamily: "'Libre Baskerville', serif",
                                 fontSize: 'var(--text-xs)',
                                 margin: '2px 2px 0 0',

@@ -24,6 +24,8 @@
   --border-strong: #B0A898;
   --shadow: rgba(30, 28, 25, 0.10);
   --shadow-strong: rgba(30, 28, 25, 0.20);
+  --overlay-bg: rgba(30, 28, 25, 0.55);
+  --text-on-badge: #FAF9F6;
 
   --text-xs: 0.70rem;
   --text-sm: 0.825rem;
@@ -57,6 +59,8 @@
   --border-strong: #504840;
   --shadow: rgba(0, 0, 0, 0.35);
   --shadow-strong: rgba(0, 0, 0, 0.55);
+  --overlay-bg: rgba(0, 0, 0, 0.65);
+  --text-on-badge: #EDE8DF;
 }
 
 * {
@@ -331,7 +335,7 @@ body {
   padding: 10px 16px;
   background: var(--sport-bike);
   border: none;
-  color: var(--bg-card);
+  color: var(--text-on-badge);
   font-family: 'Tenor Sans', sans-serif;
   font-size: var(--text-sm);
   cursor: pointer;
