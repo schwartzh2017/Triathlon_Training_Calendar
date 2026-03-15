@@ -27,7 +27,7 @@ export default function PhaseBanner({ phase }: PhaseBannerProps) {
       className="absolute inset-0 pointer-events-none"
       style={{
         borderLeft: `5px solid ${bgColor}`,
-        backgroundColor: `${bgColor}14`, // 8% opacity (hex 14 ≈ 8%)
+        backgroundColor: `${bgColor}14`,
       }}
     >
       <span

@@ -32,7 +32,7 @@ export default function Calendar({ workouts }: CalendarProps) {
     return result
   }, [days])
 
-  const getWorkoutForDate = (date: Date): Workout | undefined => {
+  function getWorkoutForDate(date: Date): Workout | undefined {
     const dateStr = format(date, 'yyyy-MM-dd')
     return workouts.find(w => w.date === dateStr)
   }

@@ -38,7 +38,9 @@ export function getPhaseForDate(date: string): PhaseConfig | undefined {
 }
 
 export function getPhaseForWeek(weekDates: Date[]): PhaseConfig | undefined {
-  if (weekDates.length === 0) return undefined
+  if (weekDates.length === 0) {
+    return undefined
+  }
   
   const phaseCounts = phases.map(phase => {
     const start = new Date(phase.startDate)
