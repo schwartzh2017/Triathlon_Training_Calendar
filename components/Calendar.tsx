@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday } from 'date-fns'
 import CalendarHeader from './CalendarHeader'
+import WorkoutModal from './WorkoutModal'
 import { getPhaseForWeek, Phase } from '@/config/phases'
 import { Workout } from '@/types/workout'
 
@@ -16,6 +17,20 @@ const PHASE_COLORS: Record<Phase, string> = {
   'base': 'var(--phase-base)',
   'race-prep': 'var(--phase-race-prep)',
   'taper': 'var(--phase-taper)',
+}
+
+const SPORT_COLORS: Record<string, string> = {
+  swim: 'var(--sport-swim)',
+  bike: 'var(--sport-bike)',
+  run: 'var(--sport-run)',
+  strength: 'var(--sport-strength)',
+}
+
+const SPORT_LABELS: Record<string, string> = {
+  swim: 'Swim',
+  bike: 'Bike',
+  run: 'Run',
+  strength: 'Strength',
 }
 
 export default function Calendar({ workouts }: CalendarProps) {
@@ -37,10 +52,25 @@ export default function Calendar({ workouts }: CalendarProps) {
     return result
   }, [days])
 
-  const getWorkoutForDate = (date: Date): Workout | undefined => {
-    const dateStr = format(date, 'yyyy-MM-dd')
-    return workouts.find(w => w.date === dateStr)
-  }
+  const workoutMap = useMemo(() => {
+    const map = new Map<string, Workout>()
+    workouts.forEach(w => map.set(w.date, w))
+    return map
+  }, [workouts])
+
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleDayClick = useCallback((date: Date) => {
+    const workout = workoutMap.get(format(date, 'yyyy-MM-dd')) || null
+    if (!workout) return
+    setSelectedWorkout(workout)
+    setIsModalOpen(true)
+  }, [workoutMap])
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false)
+  }, [])
 
   return (
     <div className="max-w-[1100px] mx-auto">
@@ -82,12 +112,13 @@ export default function Calendar({ workouts }: CalendarProps) {
                 {week.map((day, dayIdx) => {
                   const isCurrentMonth = isSameMonth(day, currentDate)
                   const isTodayDate = isToday(day)
-                  const workout = getWorkoutForDate(day)
+                  const workout = workoutMap.get(format(day, 'yyyy-MM-dd'))
                   const isMonday = dayIdx === 0
 
                   return (
                     <div
                       key={day.toISOString()}
+                      onClick={() => handleDayClick(day)}
                       className={`
                         min-h-[120px] p-[8px_10px] cursor-pointer
                         border-l border-t border-[var(--border)]
@@ -102,7 +133,7 @@ export default function Calendar({ workouts }: CalendarProps) {
                           text-[var(--text-sm)]
                           ${isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}
                         `}
-                        style={{ fontFamily: "'Tenor Sans', sans-serif" }}
+                        style={{ fontFamily: "'Tenor Sans', sans-serif", display: 'block' }}
                       >
                         {format(day, 'd')}
                       </span>
@@ -121,6 +152,25 @@ export default function Calendar({ workouts }: CalendarProps) {
                           {phase.label}
                         </span>
                       )}
+                      {workout && workout.sports.length > 0 && (
+                        <div className="mt-1">
+                          {workout.sports.map(sport => (
+                            <span
+                              key={sport}
+                              className="inline-flex items-center rounded-[2px] px-[7px] py-[2px] text-xs"
+                              style={{
+                                backgroundColor: SPORT_COLORS[sport],
+                                color: '#FAF9F6',
+                                fontFamily: "'Libre Baskerville', serif",
+                                fontSize: 'var(--text-xs)',
+                                margin: '2px 2px 0 0',
+                              }}
+                            >
+                              {SPORT_LABELS[sport]}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -129,6 +179,11 @@ export default function Calendar({ workouts }: CalendarProps) {
           )
         })}
       </div>
+      <WorkoutModal
+        workout={selectedWorkout}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }
