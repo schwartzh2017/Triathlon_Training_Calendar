@@ -7,7 +7,7 @@ description: >
   and true to an athletic field-journal aesthetic.
 ---
 
-# Frontend Design — Triathlon Training Calendar
+# Frontend Design — PDX Triathlon: May 31, 2026
 
 Every interface built for this project should feel like a **coach's planning board
 meets a performance logbook** — structured, purposeful, typographically confident,
@@ -49,10 +49,14 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --text-muted: #8A8178;        /* muted warm grey */
 
   /* Sport Colors — distinct, bold, not neon */
-  --sport-swim: #2E6B9E;        /* deep lake blue */
-  --sport-bike: #C47A2A;        /* amber/clay */
-  --sport-run: #3A7D52;         /* forest green */
-  --sport-strength: #7A4F8A;    /* deep plum */
+  --sport-swim:             #6B7A8A;  /* slate gray */
+  --sport-bike:             #8B6347;  /* warm brown */
+  --sport-run:              #3A6B45;  /* forest green */
+  --sport-strength:         #9E8B6E;  /* warm tan */
+  --sport-yoga:             #7A9E7E;  /* sage green */
+  --sport-plyometrics:      #5C6B3A;  /* dark olive */
+  --sport-sauna:            #B89060;  /* warm sand */
+  --sport-contrast-therapy: #6B8A88;  /* muted teal-gray */
 
   /* Phase Colors */
   --phase-base: #D4C9B0;        /* warm tan — base/build */
@@ -60,7 +64,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --phase-taper: #7A9E7E;       /* sage green — taper/rest */
 
   /* UI Chrome */
-  --accent-primary: #2E6B9E;    /* lake blue — primary actions */
+  --accent-primary: #3A6B45;    /* forest green — primary actions */
   --accent-warm: #C47A2A;       /* amber — highlights, hover */
   --border: #D6D0C4;            /* warm tan border */
   --border-strong: #B0A898;     /* stronger border for dividers */
@@ -79,16 +83,20 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --text-secondary: #B8B0A0;    /* warm tan */
   --text-muted: #7A7268;        /* muted warm grey */
 
-  --sport-swim: #5A9EC8;        /* lighter lake blue */
-  --sport-bike: #D4944A;        /* lighter amber */
-  --sport-run: #5A9E72;         /* lighter forest green */
-  --sport-strength: #9A6FAA;    /* lighter plum */
+  --sport-swim:             #8B9EAA;
+  --sport-bike:             #A87D5E;
+  --sport-run:              #5A9E72;
+  --sport-strength:         #B8A08A;
+  --sport-yoga:             #9ABE9E;
+  --sport-plyometrics:      #7A8E5A;
+  --sport-sauna:            #CCA870;
+  --sport-contrast-therapy: #8AACAA;
 
   --phase-base: #3A3428;        /* muted warm tan */
   --phase-race-prep: #7A4830;   /* deep sienna */
   --phase-taper: #3A5A3E;       /* deep sage */
 
-  --accent-primary: #5A9EC8;
+  --accent-primary: #5A9E72;
   --accent-warm: #D4944A;
   --border: #3A3530;
   --border-strong: #504840;
@@ -98,8 +106,9 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
 ```
 
 **Color rules:**
-- Sport colors are the dominant accent palette — swim, bike, run, strength each
-  own their color and it is used consistently everywhere they appear
+- Sport colors are the dominant accent palette — swim, bike, run, strength, yoga,
+  plyometrics, sauna, and contrast therapy each own their color and it is used
+  consistently everywhere they appear
 - Phase colors appear as background washes behind week rows — subtle, never loud
 - Never use pure black (#000) or pure white (#fff)
 - One dominant color per component. Never 3+ competing accent colors at once
@@ -111,12 +120,16 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
 
 Each sport has a consistent color applied across all UI contexts:
 
-| Sport     | Light Mode        | Usage |
-|-----------|-------------------|-------|
-| Swim      | `#2E6B9E` (lake blue) | Badge bg, day cell pill, modal header |
-| Bike      | `#C47A2A` (amber clay) | Badge bg, day cell pill, modal header |
-| Run       | `#3A7D52` (forest green) | Badge bg, day cell pill, modal header |
-| Strength  | `#7A4F8A` (deep plum) | Badge bg, day cell pill, modal header |
+| Sport | Light Mode | Usage |
+|-------|------------|-------|
+| Swim | `#6B7A8A` (slate gray) | Badge bg, day cell pill, modal header |
+| Bike | `#8B6347` (warm brown) | Badge bg, day cell pill, modal header |
+| Run | `#3A6B45` (forest green) | Badge bg, day cell pill, modal header |
+| Strength | `#9E8B6E` (warm tan) | Badge bg, day cell pill, modal header |
+| Yoga | `#7A9E7E` (sage green) | Badge bg, day cell pill, modal header |
+| Plyometrics | `#5C6B3A` (dark olive) | Badge bg, day cell pill, modal header |
+| Sauna | `#B89060` (warm sand) | Badge bg, day cell pill, modal header |
+| Contrast Therapy | `#6B8A88` (muted teal-gray) | Badge bg, day cell pill, modal header |
 
 Text on all sport-colored badges: always `#FAF9F6` (warm white), never pure white.
 
@@ -281,6 +294,8 @@ Phase banners span full week rows behind the calendar cells:
 }
 ```
 
+**Important:** Phase text labels are NOT shown inside individual day cells. The phase is communicated only through the color left border and the subtle background wash behind the week row. A small phase legend appears bottom-right, below the calendar grid, as a quiet reference — not a repeated label competing with cell content.
+
 ---
 
 ## Motion & Animation
@@ -303,10 +318,15 @@ Phase banners span full week rows behind the calendar cells:
 
 ## Navigation
 
-- Simple header bar: App title (Tenor Sans, `--text-2xl`) left-aligned
-- Month navigation: `← March 2026 →` centered, Tenor Sans
-- Dark mode toggle: top-right, sun/moon icon, smooth 250ms transition
-- No sidebar — the calendar IS the app
+The header uses a 2-row layout:
+
+- **Row 1:** App title "PDX Triathlon: May 31, 2026" — Tenor Sans, `2.5rem`, left-aligned (or centered)
+- **Row 2:** Three elements in a single row:
+  - "Today" button — shown only when the current view is NOT the today's month; hidden otherwise
+  - Month/year navigator: `← Month YYYY →` — centered, Tenor Sans
+  - Dark mode toggle — right-aligned, sun/moon icon, smooth 250ms transition
+
+No sidebar — the calendar IS the app.
 
 ---
 
