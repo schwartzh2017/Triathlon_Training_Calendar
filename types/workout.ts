@@ -1,4 +1,4 @@
-export type Sport = 'swim' | 'bike' | 'run' | 'strength'
+export type Sport = 'swim' | 'bike' | 'run' | 'strength' | 'yoga' | 'plyometrics' | 'sauna' | 'contrast-therapy'
 
 export type Phase = 'base' | 'race-prep' | 'taper'
 

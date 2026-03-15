@@ -1,17 +1,25 @@
 import { Sport, Phase } from '@/types/workout'
 
 export const SPORT_COLORS: Record<Sport, string> = {
-  swim: 'var(--sport-swim)',
-  bike: 'var(--sport-bike)',
-  run: 'var(--sport-run)',
-  strength: 'var(--sport-strength)',
+  swim:               'var(--sport-swim)',
+  bike:               'var(--sport-bike)',
+  run:                'var(--sport-run)',
+  strength:           'var(--sport-strength)',
+  yoga:               'var(--sport-yoga)',
+  plyometrics:        'var(--sport-plyometrics)',
+  sauna:              'var(--sport-sauna)',
+  'contrast-therapy': 'var(--sport-contrast-therapy)',
 }
 
 export const SPORT_LABELS: Record<Sport, string> = {
-  swim: 'Swim',
-  bike: 'Bike',
-  run: 'Run',
-  strength: 'Strength',
+  swim:               'Swim',
+  bike:               'Bike',
+  run:                'Run',
+  strength:           'Strength',
+  yoga:               'Yoga',
+  plyometrics:        'Plyo',
+  sauna:              'Sauna',
+  'contrast-therapy': 'Contrast',
 }
 
 export const PHASE_COLORS: Record<Phase, string> = {
