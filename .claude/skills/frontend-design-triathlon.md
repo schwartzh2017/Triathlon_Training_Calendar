@@ -64,7 +64,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --phase-taper: #7A9E7E;       /* sage green — taper/rest */
 
   /* UI Chrome */
-  --accent-primary: #3A6B45;    /* forest green — primary actions */
+  --accent-primary: #3C4C24;    /* forest green — primary actions */
   --accent-warm: #C47A2A;       /* amber — highlights, hover */
   --border: #D6D0C4;            /* warm tan border */
   --border-strong: #B0A898;     /* stronger border for dividers */
@@ -96,7 +96,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --phase-race-prep: #7A4830;   /* deep sienna */
   --phase-taper: #3A5A3E;       /* deep sage */
 
-  --accent-primary: #5A9E72;
+  --accent-primary: #3C4C24;
   --accent-warm: #D4944A;
   --border: #3A3530;
   --border-strong: #504840;
