@@ -11,7 +11,7 @@ function capitalizeFirstLetter(str: string): string {
 }
 
 export function formatCoachUpdate(workout: Workout, log: WorkoutLog): string {
-  const dateStr = new Date(workout.date).toLocaleDateString('en-US', {
+  const dateStr = new Date(workout.date + 'T00:00:00').toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
