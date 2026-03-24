@@ -47,7 +47,7 @@ In `:root`, replace the four sport vars with:
 --sport-bike:             #8B6347;
 --sport-run:              #3A6B45;
 --sport-strength:         #9E8B6E;
---sport-pilates:             #7A9E7E;
+--sport-pilates:          #7A9E7E;
 --sport-plyometrics:      #5C6B3A;
 --sport-sauna:            #B89060;
 --sport-contrast-therapy: #6B8A88;
@@ -59,7 +59,7 @@ In `[data-theme="dark"]`, replace the four dark sport vars with:
 --sport-bike:             #A87D5E;
 --sport-run:              #5A9E72;
 --sport-strength:         #B8A08A;
---sport-pilates:             #9ABE9E;
+--sport-pilates:          #9ABE9E;
 --sport-plyometrics:      #7A8E5A;
 --sport-sauna:            #CCA870;
 --sport-contrast-therapy: #8AACAA;
@@ -85,7 +85,7 @@ export const SPORT_COLORS: Record<Sport, string> = {
   bike:               'var(--sport-bike)',
   run:                'var(--sport-run)',
   strength:           'var(--sport-strength)',
-  pilates:               'var(--sport-pilates)',
+  pilates:            'var(--sport-pilates)',
   plyometrics:        'var(--sport-plyometrics)',
   sauna:              'var(--sport-sauna)',
   'contrast-therapy': 'var(--sport-contrast-therapy)',
@@ -96,7 +96,7 @@ export const SPORT_LABELS: Record<Sport, string> = {
   bike:               'Bike',
   run:                'Run',
   strength:           'Strength',
-  pilates:               'pilates',
+  pilates:            'Pilates',
   plyometrics:        'Plyo',
   sauna:              'Sauna',
   'contrast-therapy': 'Contrast',

@@ -53,7 +53,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --sport-bike:             #8B6347;  /* warm brown */
   --sport-run:              #3A6B45;  /* forest green */
   --sport-strength:         #9E8B6E;  /* warm tan */
-  --sport-pilates:             #7A9E7E;  /* sage green */
+  --sport-pilates:          #7A9E7E;  /* sage green */
   --sport-plyometrics:      #5C6B3A;  /* dark olive */
   --sport-sauna:            #B89060;  /* warm sand */
   --sport-contrast-therapy: #6B8A88;  /* muted teal-gray */
@@ -87,7 +87,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
   --sport-bike:             #A87D5E;
   --sport-run:              #5A9E72;
   --sport-strength:         #B8A08A;
-  --sport-pilates:             #9ABE9E;
+  --sport-pilates:          #9ABE9E;
   --sport-plyometrics:      #7A8E5A;
   --sport-sauna:            #CCA870;
   --sport-contrast-therapy: #8AACAA;
@@ -106,9 +106,7 @@ Use CSS variables exclusively. Both light and dark themes must be defined.
 ```
 
 **Color rules:**
-- Sport colors are the dominant accent palette — swim, bike, run, strength, pilates,
-  plyometrics, sauna, and contrast therapy each own their color and it is used
-  consistently everywhere they appear
+- Sport colors are the dominant accent palette — swim, bike, run, strength, pilates, plyometrics, sauna, and contrast therapy each own their color and it is used consistently everywhere they appear
 - Phase colors appear as background washes behind week rows — subtle, never loud
 - Never use pure black (#000) or pure white (#fff)
 - One dominant color per component. Never 3+ competing accent colors at once
